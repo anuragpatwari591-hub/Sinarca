@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ career.title }} — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:860px;">
+    <a href="{{ url_for('career.index') }}">&larr; All careers</a>
+    <h1 class="mt-sm">{{ career.title }}</h1>
+    <p>{{ career.description }}</p>
+
+    <div class="card">
+      <h3>Required skills</h3>
+      <div class="pill-list">{% for s in career.required_skills %}<span class="badge badge-primary">{{ s }}</span>{% endfor %}</div>
+      <h3 class="mt-md">Suitable degree backgrounds</h3>
+      <div class="pill-list">{% for d in career.degree_backgrounds %}<span class="badge badge-muted">{{ d }}</span>{% endfor %}</div>
+      {% if career.portfolio_requirements %}
+        <h3 class="mt-md">Portfolio requirements</h3>
+        <p>{{ career.portfolio_requirements }}</p>
+      {% endif %}
+      {% if career.interview_prep_notes %}
+        <h3 class="mt-md">Interview preparation</h3>
+        <p>{{ career.interview_prep_notes }}</p>
+      {% endif %}
+    </div>
+
+    {% if roadmap %}
+      <div class="card mt-md flex-between">
+        <div><h3 class="mb-0">Beginner-to-job roadmap</h3><p class="mb-0 text-muted">{{ roadmap.stages|length }} stages</p></div>
+        <a href="{{ url_for('roadmap.detail', slug=roadmap.slug) }}" class="btn btn-primary">View roadmap</a>
+      </div>
+    {% endif %}
+
+    {% if resources %}
+      <h3 class="mt-lg">Free &amp; paid resources</h3>
+      <div class="grid grid-3">
+        {% for r in resources %}
+          <a class="card card-hover" href="{{ url_for('resources.detail', resource_id=r.id) }}">
+            <span class="badge {{ 'badge-free' if r.is_free else 'badge-paid' }}">{{ 'Free' if r.is_free else '₹' ~ r.price_inr }}</span>
+            <strong class="mt-sm" style="display:block;">{{ r.title }}</strong>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if projects %}
+      <h3 class="mt-lg">Portfolio projects</h3>
+      <div class="grid grid-3">
+        {% for p in projects %}
+          <a class="card card-hover" href="{{ url_for('projects.detail', project_id=p.id) }}">
+            <strong>{{ p.title }}</strong>
+            <p class="text-muted" style="font-size:0.85rem;">{{ p.difficulty }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if current_user.is_authenticated and not current_user.is_admin %}
+      <a href="{{ url_for('skillgap.index', career_id=career.id) }}" class="btn btn-outline mt-lg">See my skill gap for this role</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

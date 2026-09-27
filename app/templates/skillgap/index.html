@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Skill Gap Analysis — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:820px;">
+    <h1>Skill Gap Analysis</h1>
+    <form method="get" class="card mb-md">
+      <label for="career_id">Target career</label>
+      <select id="career_id" name="career_id" onchange="this.form.submit()">
+        <option value="">Choose a career</option>
+        {% for c in careers %}
+          <option value="{{ c.id }}" {{ 'selected' if career and career.id == c.id }}>{{ c.title }}</option>
+        {% endfor %}
+      </select>
+    </form>
+
+    {% if gap %}
+      <div class="card">
+        <div class="flex-between">
+          <h3 class="mb-0">Readiness for {{ gap.career.title }}</h3>
+          <span class="badge badge-primary">{{ gap.readiness_pct }}%</span>
+        </div>
+        <div class="progress-track mt-sm"><div class="progress-fill" style="width:{{ gap.readiness_pct }}%;"></div></div>
+      </div>
+
+      <div class="grid grid-2 mt-md">
+        <div class="card">
+          <h3>Skills you have</h3>
+          {% for h in gap.have %}
+            <p>✅ {{ h.skill.name }} <span class="badge badge-muted">{{ h.level }}</span></p>
+          {% else %}
+            <p class="text-muted">None recorded yet.</p>
+          {% endfor %}
+        </div>
+        <div class="card">
+          <h3>Missing skills (recommended order)</h3>
+          {% for s in gap.missing %}
+            <p>{{ loop.index }}. {{ s.name }}</p>
+          {% else %}
+            <p class="text-muted">You've covered every required skill at some level!</p>
+          {% endfor %}
+        </div>
+      </div>
+      {% if roadmap %}
+        <a href="{{ url_for('roadmap.detail', slug=roadmap.slug) }}" class="btn btn-primary mt-md">View roadmap</a>
+      {% endif %}
+    {% else %}
+      <p class="text-muted">Choose a career goal to see your gap analysis, or set one during onboarding.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

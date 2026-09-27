@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Projects — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Projects</h1>
+    <p class="text-muted">Project content is managed via <code>seed/seed_data.py</code> in this build.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Title</th><th>Difficulty</th><th>Hours</th></tr>
+        {% for p in projects %}
+          <tr><td><a href="{{ url_for('projects.detail', project_id=p.id) }}">{{ p.title }}</a></td><td>{{ p.difficulty }}</td><td>{{ p.estimated_hours }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

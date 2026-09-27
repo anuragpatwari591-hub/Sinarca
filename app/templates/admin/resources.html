@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Manage Resources — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <div class="flex-between">
+      <h1>Resources</h1>
+      <a href="{{ url_for('admin.resource_form') }}" class="btn btn-primary">+ Add resource</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Title</th><th>Provider</th><th>Type</th><th>Status</th><th>Verified</th><th></th></tr>
+        {% for r in resources %}
+          <tr>
+            <td><a href="{{ url_for('resources.detail', resource_id=r.id) }}">{{ r.title }}</a></td>
+            <td>{{ r.provider }}</td>
+            <td>{{ r.resource_type }}</td>
+            <td><span class="badge {{ 'badge-free' if r.status == 'active' else 'badge-danger' }}">{{ r.status }}</span></td>
+            <td>{{ r.last_verified_at.strftime('%d %b %Y') if r.last_verified_at else '—' }}</td>
+            <td class="flex gap-sm">
+              <a href="{{ url_for('admin.resource_form', resource_id=r.id) }}" class="btn btn-sm btn-outline">Edit</a>
+              <form method="post" action="{{ url_for('admin.delete_resource', resource_id=r.id) }}" onsubmit="return confirm('Delete this resource?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

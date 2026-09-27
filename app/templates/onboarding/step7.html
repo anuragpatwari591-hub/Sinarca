@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Learning DNA · Budget — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container onboarding-card">
+    <div class="step-tracker">
+      {% for i in range(1, total_steps + 1) %}<div class="step-dot {{ 'done' if i <= step_number else '' }}"></div>{% endfor %}
+    </div>
+    <div class="card">
+      <span class="badge badge-primary">Step {{ step_number }} of {{ total_steps }}</span>
+      <h1 class="mt-sm">Free vs. paid</h1>
+      <p class="text-muted">Last step. We'll always prefer free resources unless you tell us otherwise.</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="radio-row mb-md">
+          {% for value, label in budgets %}
+            <label class="radio-pill">
+              <input type="radio" name="budget_preference" value="{{ value }}" {{ 'checked' if data.get('budget_preference', 'mostly_free') == value }}>
+              {{ label }}
+            </label>
+          {% endfor %}
+        </div>
+        <label class="checkbox-tile" style="max-width:320px;">
+          <input type="checkbox" name="free_first_mode" {{ 'checked' if data.get('free_first_mode', True) }}>
+          Enable Free-First mode (recommended)
+        </label>
+        <button type="submit" class="btn btn-primary btn-block mt-md">Finish — build my dashboard</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

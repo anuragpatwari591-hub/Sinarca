@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <div class="grid grid-4">
+      <div class="card stat-tile"><div class="stat-number">{{ total_users }}</div><div class="stat-label">Students</div></div>
+      <div class="card stat-tile"><div class="stat-number">{{ active_users }}</div><div class="stat-label">Active students</div></div>
+      <div class="card stat-tile"><div class="stat-number">{{ total_resources }}</div><div class="stat-label">Resources</div></div>
+      <div class="card stat-tile"><div class="stat-number">{{ open_reports }}</div><div class="stat-label">Open reports</div></div>
+    </div>
+
+    <div class="grid grid-2 mt-md">
+      <div class="card">
+        <h3>Clicks &amp; monetization architecture</h3>
+        <p>Total outbound clicks tracked: <strong>{{ affiliate_clicks }}</strong></p>
+        <p>Free resource clicks: <strong>{{ free_clicks }}</strong> · Paid resource clicks: <strong>{{ paid_clicks }}</strong></p>
+        <p class="text-muted">No live affiliate network is connected yet — see docs/business-model.md.</p>
+        {% if broken_resources %}<p class="text-muted">⚠ {{ broken_resources }} resources currently flagged broken.</p>{% endif %}
+      </div>
+      <div class="card">
+        <h3>Popular streams</h3>
+        {% for name, count in popular_streams %}<p>{{ name }} — {{ count }} students</p>{% else %}<p class="text-muted">No data yet.</p>{% endfor %}
+        <h3 class="mt-md">Most-clicked topics</h3>
+        {% for topic, count in popular_topics %}<p>{{ topic }} — {{ count }} clicks</p>{% else %}<p class="text-muted">No data yet.</p>{% endfor %}
+      </div>
+    </div>
+
+    <div class="grid grid-4 mt-md">
+      <a class="card card-hover" href="{{ url_for('admin.resources') }}">Manage Resources</a>
+      <a class="card card-hover" href="{{ url_for('admin.users') }}">Manage Users</a>
+      <a class="card card-hover" href="{{ url_for('admin.reports') }}">Review Reports</a>
+      <a class="card card-hover" href="{{ url_for('admin.analytics') }}">Analytics</a>
+      <a class="card card-hover" href="{{ url_for('admin.skills') }}">Skills</a>
+      <a class="card card-hover" href="{{ url_for('admin.careers') }}">Careers</a>
+      <a class="card card-hover" href="{{ url_for('admin.roadmaps') }}">Roadmaps</a>
+      <a class="card card-hover" href="{{ url_for('admin.projects') }}">Projects</a>
+      <a class="card card-hover" href="{{ url_for('admin.sponsored') }}">Sponsored Content</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Career Explorer — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Career Explorer</h1>
+    <div class="grid grid-3">
+      {% for c in careers %}
+        <a class="card card-hover" href="{{ url_for('career.detail', slug=c.slug) }}">
+          <h3>{{ c.title }}</h3>
+          <p>{{ c.description|truncate(110) }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

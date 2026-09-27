@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Skills — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Skills</h1>
+    <form method="post" class="card mb-md flex gap-sm items-center">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="text" name="name" placeholder="Skill name" required>
+      <input type="text" name="category" placeholder="Category (e.g. programming)">
+      <button type="submit" class="btn btn-primary">Add skill</button>
+    </form>
+    <div class="pill-list">
+      {% for s in skills %}<span class="badge badge-muted">{{ s.name }} ({{ s.category }})</span>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

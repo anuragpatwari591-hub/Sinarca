@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}I don't know what to learn — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:720px;">
+    <h1>I don't know what to learn</h1>
+    <p>That's completely normal. We can't predict your future, but based on a few honest answers we can show a few evidence-based directions worth exploring — with the skills, a starter roadmap, free resources, and a first project for each.</p>
+    <div class="card mt-md">
+      <p><strong>To get a real, personalized starting point:</strong> create a free account and complete the 7-step Learning DNA — it takes about 3 minutes and covers exactly the questions below.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Start the 7 questions</a>
+    </div>
+    <h2 class="mt-lg">A few directions to explore right now</h2>
+    <div class="grid grid-2 mt-md">
+      {% for c in careers %}
+        <a class="card card-hover" href="{{ url_for('career.detail', slug=c.slug) }}">
+          <h3>{{ c.title }}</h3>
+          <p>{{ c.description|truncate(120) }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

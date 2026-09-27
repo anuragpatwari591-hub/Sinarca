@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Analytics — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Analytics</h1>
+    <div class="grid grid-3">
+      <div class="card stat-tile"><div class="stat-number">{{ total_progress }}</div><div class="stat-label">Resource starts</div></div>
+      <div class="card stat-tile"><div class="stat-number">{{ completed_progress }}</div><div class="stat-label">Completions</div></div>
+      <div class="card stat-tile"><div class="stat-number">{{ total_bookmarks }}</div><div class="stat-label">Bookmarks saved</div></div>
+    </div>
+    <p class="text-muted mt-md">Deeper analytics (retention curves, conversion funnels) are marked Coming Soon — see PROJECT_STATUS.md for the roadmap.</p>
+  </div>
+</section>
+{% endblock %}

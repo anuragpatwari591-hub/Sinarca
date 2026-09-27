@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Learning DNA · Current skills — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container onboarding-card">
+    <div class="step-tracker">
+      {% for i in range(1, total_steps + 1) %}<div class="step-dot {{ 'done' if i <= step_number else '' }}"></div>{% endfor %}
+    </div>
+    <div class="card">
+      <span class="badge badge-primary">Step {{ step_number }} of {{ total_steps }}</span>
+      <h1 class="mt-sm">Rate your current level</h1>
+      <p class="text-muted">Self-rated is fine — this is a starting point, not a test. Skip any you're not sure about.</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        {% for skill in skills %}
+          <div class="field">
+            <label>{{ skill.name }}</label>
+            <div class="radio-row">
+              {% for level in ['beginner', 'intermediate', 'advanced'] %}
+                <label class="radio-pill">
+                  <input type="radio" name="skill_{{ skill.slug }}" value="{{ level }}"
+                    {{ 'checked' if data.get('skill_levels', {}).get(skill.slug) == level }}>
+                  {{ level|capitalize }}
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block mt-md">Continue</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

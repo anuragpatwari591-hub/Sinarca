@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }} — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:760px;">
+    <a href="{{ url_for('projects.index') }}">&larr; All projects</a>
+    <h1 class="mt-sm">{{ project.title }}</h1>
+    <span class="badge badge-difficulty-{{ project.difficulty }}">{{ project.difficulty }}</span>
+    <span class="badge badge-muted">~{{ project.estimated_hours }} hours</span>
+
+    <div class="card mt-md">
+      <p>{{ project.description }}</p>
+      <h3>Required skills</h3>
+      <div class="pill-list">{% for s in project.required_skills %}<span class="badge badge-primary">{{ s }}</span>{% endfor %}</div>
+      <h3 class="mt-md">Technologies</h3>
+      <div class="pill-list">{% for t in project.technologies %}<span class="badge badge-muted">{{ t }}</span>{% endfor %}</div>
+      <h3 class="mt-md">You'll learn</h3>
+      <ul>{% for o in project.learning_outcomes %}<li>{{ o }}</li>{% endfor %}</ul>
+      <h3 class="mt-md">GitHub checklist</h3>
+      <ul>{% for c in project.github_checklist %}<li>☐ {{ c }}</li>{% endfor %}</ul>
+      {% if project.portfolio_description %}
+        <h3 class="mt-md">Portfolio description</h3>
+        <p class="text-muted">{{ project.portfolio_description }}</p>
+      {% endif %}
+    </div>
+
+    {% if current_user.is_authenticated and not current_user.is_admin %}
+      <div class="card mt-md">
+        <h3>Your status</h3>
+        <form method="post" action="{{ url_for('projects.update_status', project_id=project.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="grid grid-2">
+            <select name="status">
+              <option value="planned" {{ 'selected' if user_project and user_project.status == 'planned' }}>Planned</option>
+              <option value="in_progress" {{ 'selected' if user_project and user_project.status == 'in_progress' }}>In progress</option>
+              <option value="completed" {{ 'selected' if user_project and user_project.status == 'completed' }}>Completed</option>
+            </select>
+            <input type="text" name="repo_url" placeholder="GitHub repo URL (optional)" value="{{ user_project.repo_url if user_project else '' }}">
+          </div>
+          <button type="submit" class="btn btn-primary mt-sm">Save status</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

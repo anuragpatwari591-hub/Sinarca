@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Good to see you, {{ current_user.name.split(' ')[0] }}.</h1>
+    <p class="text-muted">Here's what matters today.</p>
+
+    <div class="grid" style="grid-template-columns: 1.4fr 1fr; gap:24px;">
+      <div>
+        {% if next_move %}
+          <div class="next-move">
+            <span class="badge" style="background:rgba(255,255,255,.18); color:#fff;">YOUR NEXT MOVE</span>
+            <h3 class="mt-sm">{{ next_move.resource.title }}</h3>
+            <div class="why-box">
+              <strong>Why?</strong> {{ next_move.reasons[0] }}
+              {% if next_move.reasons|length > 1 %}<br><small>{{ next_move.reasons[1] }}</small>{% endif %}
+            </div>
+            <p style="color:#e6e4ff;">⏱ {{ next_move.estimated_minutes }} minutes · {{ 'Free' if next_move.resource.is_free else '₹' ~ next_move.resource.price_inr }}</p>
+            {% if next_move.after_project %}
+              <p style="color:#e6e4ff;">After this: build <strong>{{ next_move.after_project.title }}</strong>.</p>
+            {% endif %}
+            <a href="{{ url_for('resources.go', resource_id=next_move.resource.id) }}" class="btn btn-accent">Start learning</a>
+            <a href="{{ url_for('resources.detail', resource_id=next_move.resource.id) }}" class="btn btn-ghost" style="color:#fff;">Details</a>
+          </div>
+        {% else %}
+          <div class="card empty-state">
+            <div class="icon">🧭</div>
+            <p>No next move yet — set a career goal in onboarding, or explore the <a href="{{ url_for('resources.search') }}">resource directory</a>.</p>
+          </div>
+        {% endif %}
+
+        <div class="card mt-md">
+          <div class="flex-between"><h3 class="mb-0">Continue learning</h3><a href="{{ url_for('resources.search') }}" class="btn btn-sm btn-ghost">Browse more</a></div>
+          {% if continue_learning %}
+            {% for lp in continue_learning %}
+              <div class="flex-between mt-sm" style="border-bottom:1px solid var(--border); padding-bottom:10px;">
+                <div>
+                  <a href="{{ url_for('resources.detail', resource_id=lp.resource_id) }}"><strong>{{ lp.resource.title }}</strong></a>
+                  <div class="progress-track progress-track-sm mt-sm" style="width:200px;"><div class="progress-fill" style="width:{{ lp.progress_pct }}%;"></div></div>
+                </div>
+                <span class="badge badge-muted">{{ lp.progress_pct }}%</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted mt-sm">Nothing in progress yet — start your Next Move above.</p>
+          {% endif %}
+        </div>
+
+        <div class="card mt-md">
+          <h3>Recommended next</h3>
+          <p class="text-muted">Explainable picks based on your Learning DNA.</p>
+          <div class="grid grid-2 mt-sm">
+            {% for rec in recommendations %}
+              <div class="card">
+                <div class="flex-between">
+                  <span class="badge badge-difficulty-{{ rec.resource.difficulty }}">{{ rec.resource.difficulty }}</span>
+                  <span class="badge {{ 'badge-free' if rec.resource.is_free else 'badge-paid' }}">{{ 'Free' if rec.resource.is_free else '₹' ~ rec.resource.price_inr }}</span>
+                </div>
+                <h3 class="mt-sm" style="font-size:1.05rem;"><a href="{{ url_for('resources.detail', resource_id=rec.resource.id) }}">{{ rec.resource.title }}</a></h3>
+                <p class="text-muted" style="font-size:0.85rem;">Score {{ rec.score }}/100</p>
+                <details><summary>Why this recommendation?</summary><p style="font-size:0.85rem;">{{ rec.reasons[0] }}</p></details>
+              </div>
+            {% else %}
+              <p class="text-muted">Complete onboarding to unlock recommendations.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Weekly goal</h3>
+          <p>{{ week_minutes }} / {{ weekly_goal_minutes }} minutes</p>
+          <div class="progress-track"><div class="progress-fill" style="width:{{ (100 * week_minutes / weekly_goal_minutes)|round if weekly_goal_minutes else 0 }}%;"></div></div>
+        </div>
+
+        <div class="card mt-md">
+          <h3>Streak</h3>
+          <p style="font-size:1.8rem; font-weight:800; color:var(--accent-dark);">🔥 {{ streak }} day{{ 's' if streak != 1 }}</p>
+        </div>
+
+        {% if roadmap_progress %}
+        <div class="card mt-md">
+          <h3>Your roadmap</h3>
+          <p><a href="{{ url_for('roadmap.detail', slug=roadmap_progress.roadmap.slug) }}">{{ roadmap_progress.roadmap.title }}</a></p>
+          <div class="progress-track"><div class="progress-fill" style="width:{{ roadmap_progress.pct }}%;"></div></div>
+          <p class="text-muted mt-sm">{{ roadmap_progress.pct }}% complete</p>
+        </div>
+        {% endif %}
+
+        <div class="card mt-md">
+          <h3>Skill progress</h3>
+          {% for sp in skill_progress %}
+            <div class="mt-sm">
+              <div class="flex-between"><span>{{ sp.skill.name }}</span><span class="text-muted">{{ sp.pct }}%</span></div>
+              <div class="progress-track progress-track-sm"><div class="progress-fill" style="width:{{ sp.pct }}%;"></div></div>
+            </div>
+          {% else %}
+            <p class="text-muted">Rate your skills in your profile to see progress here.</p>
+          {% endfor %}
+          <a href="{{ url_for('skillgap.index') }}" class="btn btn-outline btn-sm btn-block mt-md">View skill gap</a>
+        </div>
+
+        <div class="card mt-md">
+          <h3>Upcoming</h3>
+          {% for up in upcoming_projects %}
+            <p><a href="{{ url_for('projects.detail', project_id=up.project_id) }}">{{ up.project.title }}</a></p>
+          {% else %}
+            <p class="text-muted">No planned projects yet.</p>
+          {% endfor %}
+          <a href="{{ url_for('projects.index') }}" class="btn btn-outline btn-sm btn-block">Browse projects</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

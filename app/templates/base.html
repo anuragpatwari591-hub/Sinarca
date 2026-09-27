@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ platform_name }} — {{ platform_tagline }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}NAVORA is a personal learning navigator for students: tell it your stream, goals and learning style, and it turns information overload into a personalized next action.{% endblock %}">
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% if current_user.is_authenticated and current_user.email == 'demo.student@navora.app' %}
+    <div class="demo-banner">You're exploring the NAVORA Demo Student account — all activity here is Demo Data.</div>
+  {% endif %}
+
+  <nav class="navbar">
+    <div class="container">
+      <a class="brand" href="{{ url_for('main.landing') }}">
+        <span class="brand-mark">N</span> {{ platform_name }}
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <div class="nav-links">
+        {% if current_user.is_authenticated and not current_user.is_admin %}
+          <a href="{{ url_for('dashboard.home') }}">Dashboard</a>
+          <a href="{{ url_for('roadmap.index') }}">Roadmaps</a>
+          <a href="{{ url_for('resources.search') }}">Resources</a>
+          <a href="{{ url_for('projects.index') }}">Projects</a>
+          <a href="{{ url_for('career.index') }}">Careers</a>
+          <a href="{{ url_for('chatbot.mentor') }}">AI Mentor</a>
+          <a href="{{ url_for('semester.planner') }}">Semester</a>
+          <a href="{{ url_for('bookmarks.index') }}">Bookmarks</a>
+          <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% elif current_user.is_authenticated and current_user.is_admin %}
+          <a href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
+          <a href="{{ url_for('admin.resources') }}">Resources</a>
+          <a href="{{ url_for('admin.users') }}">Users</a>
+          <a href="{{ url_for('admin.reports') }}">Reports</a>
+          <a href="{{ url_for('auth.logout') }}">Logout</a>
+        {% else %}
+          <a href="{{ url_for('resources.search') }}">Resources</a>
+          <a href="{{ url_for('career.index') }}">Careers</a>
+          <a href="{{ url_for('roadmap.index') }}">Roadmaps</a>
+          <a href="{{ url_for('main.discover') }}">I don't know what to learn</a>
+          <a href="{{ url_for('auth.login') }}">Log in</a>
+          <a class="btn btn-primary btn-sm" href="{{ url_for('auth.register') }}">Get started</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <div class="flash-stack">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'error' if category == 'error' else category }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+  </div>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="color:#fff;">
+            <span class="brand-mark">N</span> {{ platform_name }}
+          </div>
+          <p style="color:#9295b8; margin-top:12px; max-width: 320px;">{{ platform_tagline }} A personal learning navigator built for students across every stream.</p>
+        </div>
+        <div>
+          <h4>Platform</h4>
+          <ul style="list-style:none; padding:0;">
+            <li><a href="{{ url_for('resources.search') }}">Resource Discovery</a></li>
+            <li><a href="{{ url_for('roadmap.index') }}">Roadmaps</a></li>
+            <li><a href="{{ url_for('career.index') }}">Career Explorer</a></li>
+            <li><a href="{{ url_for('main.discover') }}">Not sure what to learn</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul style="list-style:none; padding:0;">
+            <li><a href="{{ url_for('main.about') }}">About</a></li>
+            <li><a href="{{ url_for('main.disclosures') }}">Affiliate &amp; Sponsorship Disclosure</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul style="list-style:none; padding:0;">
+            <li><a href="{{ url_for('main.privacy') }}">Privacy Policy</a></li>
+            <li><a href="{{ url_for('main.terms') }}">Terms of Use</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; 2026 {{ platform_name }}. Built as a B.Tech IT capstone project.</span>
+        <span>Recommendations are informational — always verify a course independently.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

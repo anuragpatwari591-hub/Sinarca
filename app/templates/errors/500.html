@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong — {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="container state-page">
+  <h1>500</h1>
+  <h2>Something went wrong on our end.</h2>
+  <p>We've logged the issue. Please try again in a moment.</p>
+  <a class="btn btn-primary" href="{{ url_for('main.landing') }}">Back to {{ platform_name }}</a>
+</div>
+{% endblock %}

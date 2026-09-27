@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Learning DNA · Time & language — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container onboarding-card">
+    <div class="step-tracker">
+      {% for i in range(1, total_steps + 1) %}<div class="step-dot {{ 'done' if i <= step_number else '' }}"></div>{% endfor %}
+    </div>
+    <div class="card">
+      <span class="badge badge-primary">Step {{ step_number }} of {{ total_steps }}</span>
+      <h1 class="mt-sm">Time &amp; language</h1>
+      <div class="field">
+        <label>How much time can you study, most days?</label>
+        <form method="post" id="step-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="radio-row mb-md">
+            {% for value, label in time_options %}
+              <label class="radio-pill">
+                <input type="radio" name="time_availability" value="{{ value }}" {{ 'checked' if data.get('time_availability', '1_hour_per_day') == value }}>
+                {{ label }}
+              </label>
+            {% endfor %}
+          </div>
+          <label>Preferred language</label>
+          <div class="radio-row mb-md">
+            {% for lang in languages %}
+              <label class="radio-pill">
+                <input type="radio" name="language" value="{{ lang }}" {{ 'checked' if data.get('language', 'English') == lang }}>
+                {{ lang }}
+              </label>
+            {% endfor %}
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Continue</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Project Ideas — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Build, don't just watch</h1>
+    <p class="text-muted">Every skill track has projects attached — pick one that matches your level.</p>
+    <div class="pill-list mb-md">
+      <a href="{{ url_for('projects.index') }}" class="badge {{ 'badge-primary' if not difficulty else 'badge-muted' }}">All</a>
+      {% for d in difficulties %}
+        <a href="{{ url_for('projects.index', difficulty=d) }}" class="badge {{ 'badge-primary' if difficulty == d else 'badge-muted' }}">{{ d|capitalize }}</a>
+      {% endfor %}
+    </div>
+    <div class="grid grid-3">
+      {% for p in projects %}
+        <a class="card card-hover" href="{{ url_for('projects.detail', project_id=p.id) }}">
+          <span class="badge badge-difficulty-{{ p.difficulty }}">{{ p.difficulty }}</span>
+          <h3 class="mt-sm">{{ p.title }}</h3>
+          <p>{{ p.description|truncate(100) }}</p>
+          <p class="text-muted" style="font-size:0.85rem;">~{{ p.estimated_hours }} hours</p>
+          {% if user_status.get(p.id) %}<span class="badge badge-primary">{{ user_status[p.id]|replace('_',' ')|capitalize }}</span>{% endif %}
+        </a>
+      {% else %}
+        <p class="text-muted">No projects found.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

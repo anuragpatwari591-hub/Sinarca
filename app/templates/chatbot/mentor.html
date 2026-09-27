@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}AI Study Mentor — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:760px;">
+    <h1>AI Study Mentor</h1>
+    <p class="text-muted">
+      {% if ai_configured %}Powered by your connected AI provider.{% else %}
+      Running on NAVORA's deterministic mentor engine — no external AI is configured, so every answer is generated from your actual profile and roadmap data. See docs/future-ai.md.{% endif %}
+    </p>
+
+    <div class="mode-tabs">
+      {% for value, label in modes %}
+        <a href="{{ url_for('chatbot.mentor', mode=value) }}" class="badge {{ 'badge-primary' if mode == value else 'badge-muted' }}">{{ label }}</a>
+      {% endfor %}
+    </div>
+
+    <div class="card">
+      <div class="chat-window">
+        {% for m in history %}
+          <div class="chat-bubble {{ m.role }}">{{ m.content }}</div>
+        {% else %}
+          <div class="empty-state">
+            <div class="icon">🤖</div>
+            <p>Ask me anything — try "{{ 'Explain recursion' if mode == 'explain' else 'What should I learn next?' }}"</p>
+          </div>
+        {% endfor %}
+      </div>
+      <form method="post" class="mt-md flex gap-sm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="mode" value="{{ mode }}">
+        <input type="text" name="message" placeholder="Type your question..." required style="flex:1;">
+        <button type="submit" class="btn btn-primary">Send</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

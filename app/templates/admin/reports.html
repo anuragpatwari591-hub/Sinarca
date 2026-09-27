@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Reports — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Resource Reports</h1>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Resource</th><th>Type</th><th>Details</th><th>Reported</th><th>Status</th><th></th></tr>
+        {% for r in reports %}
+          <tr>
+            <td><a href="{{ url_for('resources.detail', resource_id=r.resource_id) }}">{{ r.resource.title }}</a></td>
+            <td>{{ r.report_type|replace('_',' ') }}</td>
+            <td>{{ r.details }}</td>
+            <td>{{ r.created_at.strftime('%d %b %Y') }}</td>
+            <td><span class="badge badge-muted">{{ r.status }}</span></td>
+            <td>
+              <form method="post" action="{{ url_for('admin.resolve_report', report_id=r.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="status" onchange="this.form.submit()">
+                  <option value="open" {{ 'selected' if r.status=='open' }}>Open</option>
+                  <option value="reviewing" {{ 'selected' if r.status=='reviewing' }}>Reviewing</option>
+                  <option value="resolved" {{ 'selected' if r.status=='resolved' }}>Resolved</option>
+                  <option value="dismissed" {{ 'selected' if r.status=='dismissed' }}>Dismissed</option>
+                </select>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6">No reports.</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

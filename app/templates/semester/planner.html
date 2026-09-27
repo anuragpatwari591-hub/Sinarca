@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Semester Planner — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:760px;">
+    <h1>Semester Mode</h1>
+    <p class="text-muted">University academics and career skills are tracked separately, so you never lose sight of your degree.</p>
+
+    <div class="card">
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="grid grid-2">
+          <div class="field"><label for="semester">Semester</label><input type="number" id="semester" name="semester" min="1" max="10" value="{{ plan.semester if plan else '' }}"></div>
+          <div class="field"><label for="exam_date">Exam date</label><input type="date" id="exam_date" name="exam_date" value="{{ plan.exam_date if plan and plan.exam_date else '' }}"></div>
+        </div>
+        <div class="field">
+          <label for="subjects">Subjects (comma-separated)</label>
+          <input type="text" id="subjects" name="subjects" value="{{ plan.subjects|join(', ') if plan else '' }}" placeholder="Data Structures, DBMS, Networks">
+        </div>
+        <div class="field">
+          <label>Weak subjects</label>
+          <div class="checkbox-grid">
+            {% for s in (plan.subjects if plan else []) %}
+              <label class="checkbox-tile"><input type="checkbox" name="weak_subjects" value="{{ s }}" {{ 'checked' if plan and s in plan.weak_subjects }}> {{ s }}</label>
+            {% endfor %}
+          </div>
+          <div class="help-text">Save subjects first, then re-open this page to mark weak ones.</div>
+        </div>
+        <div class="field"><label for="target_hours_per_week">Target study hours / week</label><input type="number" id="target_hours_per_week" name="target_hours_per_week" value="{{ plan.target_hours_per_week if plan else 10 }}"></div>
+        <button type="submit" class="btn btn-primary">Save semester plan</button>
+      </form>
+    </div>
+
+    {% if weekly_plan %}
+      <div class="card mt-md">
+        <h3>Suggested weekly split</h3>
+        {% for item in weekly_plan %}
+          <div class="flex-between" style="border-bottom:1px solid var(--border); padding:8px 0;">
+            <span>{{ item.subject }} <small class="text-muted">({{ item.priority }})</small></span>
+            <span class="badge badge-primary">{{ item.hours }} h</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

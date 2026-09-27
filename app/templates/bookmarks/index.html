@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Bookmarks — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Bookmarks</h1>
+    <div class="pill-list mb-md">
+      <a href="{{ url_for('bookmarks.index') }}" class="badge {{ 'badge-primary' if not current_folder else 'badge-muted' }}">All</a>
+      {% for f in folders %}
+        <a href="{{ url_for('bookmarks.index', folder=f) }}" class="badge {{ 'badge-primary' if current_folder == f else 'badge-muted' }}">{{ f }}</a>
+      {% endfor %}
+    </div>
+    <div class="grid grid-3">
+      {% for item in items %}
+        <div class="card">
+          <span class="badge badge-muted">{{ item.bookmark.folder }}</span>
+          <h3 class="mt-sm" style="font-size:1.05rem;">
+            {% if item.bookmark.target_type == 'resource' %}
+              <a href="{{ url_for('resources.detail', resource_id=item.target.id) }}">{{ item.target.title }}</a>
+            {% elif item.bookmark.target_type == 'project' %}
+              <a href="{{ url_for('projects.detail', project_id=item.target.id) }}">{{ item.target.title }}</a>
+            {% elif item.bookmark.target_type == 'roadmap' %}
+              <a href="{{ url_for('roadmap.detail', slug=item.target.slug) }}">{{ item.target.title }}</a>
+            {% else %}
+              <a href="{{ url_for('career.detail', slug=item.target.slug) }}">{{ item.target.title }}</a>
+            {% endif %}
+          </h3>
+          <form method="post" action="{{ url_for('bookmarks.remove', bookmark_id=item.bookmark.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-sm">Remove</button>
+          </form>
+        </div>
+      {% else %}
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="icon">🔖</div>
+          <p>No bookmarks yet — save resources for later from any resource page.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

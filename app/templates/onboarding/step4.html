@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Learning DNA · Career goal — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container onboarding-card">
+    <div class="step-tracker">
+      {% for i in range(1, total_steps + 1) %}<div class="step-dot {{ 'done' if i <= step_number else '' }}"></div>{% endfor %}
+    </div>
+    <div class="card">
+      <span class="badge badge-primary">Step {{ step_number }} of {{ total_steps }}</span>
+      <h1 class="mt-sm">What's your career goal?</h1>
+      <p class="text-muted">Choose a suggestion, or type your own — this drives your roadmap and skill-gap analysis.</p>
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field">
+          <label for="career_goal">Career goal</label>
+          <input type="text" id="career_goal" name="career_goal" list="career-suggestions" value="{{ data.get('career_goal', '') }}" placeholder="e.g. Cybersecurity Analyst" required>
+          <datalist id="career-suggestions">
+            {% for c in career_suggestions %}<option value="{{ c }}">{% endfor %}
+          </datalist>
+        </div>
+        <div class="pill-list">
+          {% for c in careers %}
+            <span class="badge badge-muted">{{ c.title }}</span>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-md">Continue</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

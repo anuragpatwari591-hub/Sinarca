@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ roadmap.title }} — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:860px;">
+    <h1>{{ roadmap.title }}</h1>
+    <p>{{ roadmap.description }}</p>
+
+    {% if current_user.is_authenticated and not current_user.is_admin %}
+      {% if not progress %}
+        <form method="post" action="{{ url_for('roadmap.start', slug=roadmap.slug) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-primary">Start this roadmap</button>
+        </form>
+      {% else %}
+        <span class="badge badge-primary">In progress · Stage {{ current_order }}</span>
+      {% endif %}
+    {% endif %}
+
+    <div class="mt-lg">
+      {% for stage in roadmap.stages %}
+        <div class="card mt-md {{ 'card-hover' if stage.order in completed_stage_orders }}">
+          <div class="flex-between">
+            <h3 class="mb-0">Phase {{ stage.order }}: {{ stage.title }}</h3>
+            {% if stage.order in completed_stage_orders %}<span class="badge badge-free">Completed</span>
+            {% elif stage.order == current_order %}<span class="badge badge-primary">Current</span>
+            {% else %}<span class="badge badge-muted">Upcoming</span>{% endif %}
+          </div>
+          <p>{{ stage.description }}</p>
+          <p class="text-muted" style="font-size:0.85rem;">Estimated {{ stage.estimated_hours }} hours</p>
+          <ul>
+            {% for rr in stage.resources %}
+              <li>
+                <a href="{{ url_for('resources.detail', resource_id=rr.resource_id) }}">{{ rr.resource.title }}</a>
+                {% if rr.resource_id in completed_resource_ids %}<span class="badge badge-free">Done</span>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          {% if stage.milestone_project %}
+            <p><strong>Milestone project:</strong> <a href="{{ url_for('projects.detail', project_id=stage.milestone_project_id) }}">{{ stage.milestone_project.title }}</a></p>
+          {% endif %}
+          {% if current_user.is_authenticated and not current_user.is_admin and progress and stage.order not in completed_stage_orders %}
+            <form method="post" action="{{ url_for('roadmap.complete_stage', slug=roadmap.slug, order=stage.order) }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-outline btn-sm">Mark stage complete</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

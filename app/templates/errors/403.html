@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Access denied — {{ platform_name }}{% endblock %}
+{% block content %}
+<div class="container state-page">
+  <h1>403</h1>
+  <h2>You don't have access to this page.</h2>
+  <p>If you think this is a mistake, contact an administrator.</p>
+  <a class="btn btn-primary" href="{{ url_for('main.landing') }}">Back to {{ platform_name }}</a>
+</div>
+{% endblock %}

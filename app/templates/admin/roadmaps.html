@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Roadmaps — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Roadmaps</h1>
+    <p class="text-muted">Roadmap content is managed via <code>seed/seed_data.py</code> in this build.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Title</th><th>Stages</th></tr>
+        {% for r in roadmaps %}
+          <tr><td><a href="{{ url_for('roadmap.detail', slug=r.slug) }}">{{ r.title }}</a></td><td>{{ r.stages|length }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

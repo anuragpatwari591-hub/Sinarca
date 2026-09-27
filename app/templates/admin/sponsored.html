@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sponsored Content — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Sponsored Content</h1>
+    <p class="text-muted">No sponsors are connected in this build. Sponsored placements always render with a visible "Sponsored" label and are never mixed silently into organic recommendations (see docs/business-model.md).</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Title</th><th>Sponsor</th><th>Active</th></tr>
+        {% for s in items %}
+          <tr><td>{{ s.title }}</td><td>{{ s.sponsor_name }}</td><td>{{ 'Yes' if s.is_active else 'No' }}</td></tr>
+        {% else %}
+          <tr><td colspan="3">Coming Soon — no sponsorships configured yet.</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

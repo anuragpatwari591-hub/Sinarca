@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Compare Resources — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Compare Resources</h1>
+    {% if resources %}
+      <div class="table-wrap">
+        <table>
+          <tr><th>Feature</th>{% for r in resources %}<th>{{ r.title }}</th>{% endfor %}</tr>
+          <tr><td>Provider</td>{% for r in resources %}<td>{{ r.provider }}</td>{% endfor %}</tr>
+          <tr><td>Price</td>{% for r in resources %}<td>{{ 'Free' if r.is_free else '₹' ~ r.price_inr }}</td>{% endfor %}</tr>
+          <tr><td>Duration</td>{% for r in resources %}<td>{{ r.duration_minutes ~ ' min' if r.duration_minutes else '—' }}</td>{% endfor %}</tr>
+          <tr><td>Difficulty</td>{% for r in resources %}<td>{{ r.difficulty }}</td>{% endfor %}</tr>
+          <tr><td>Language</td>{% for r in resources %}<td>{{ r.language }}</td>{% endfor %}</tr>
+          <tr><td>Rating</td>{% for r in resources %}<td>{{ (r.rating ~ '/5 (' ~ r.rating_count ~ ')') if r.has_real_rating else 'Unavailable' }}</td>{% endfor %}</tr>
+          <tr><td>Format</td>{% for r in resources %}<td>{{ r.format_tags|join(', ') or '—' }}</td>{% endfor %}</tr>
+        </table>
+      </div>
+      <p class="text-muted mt-md">We don't declare an overall "winner" — the best fit depends on your learning style, budget and time. Use the table above alongside each resource's "Why this resource?" explanation.</p>
+      <a href="{{ url_for('resources.search') }}" class="btn btn-outline mt-sm">Find more to compare</a>
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">⚖️</div>
+        <p>Select resources from the search page to compare them here (append <code>?id=1&amp;id=2</code>).</p>
+        <a href="{{ url_for('resources.search') }}" class="btn btn-primary mt-sm">Browse resources</a>
+      </div>
+    {% endif %}
+
+    {% if suggestions %}
+      <h3 class="mt-lg">More on this topic</h3>
+      <div class="grid grid-3">
+        {% for s in suggestions %}
+          <a class="card card-hover" href="{{ url_for('resources.detail', resource_id=s.id) }}">{{ s.title }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

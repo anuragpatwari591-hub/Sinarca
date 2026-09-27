@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Resource Discovery — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Resource Discovery</h1>
+    <form method="get" class="card mb-md">
+      <div class="grid grid-4">
+        <div class="field mb-0"><label for="q">Search</label><input type="search" id="q" name="q" value="{{ q }}" placeholder="Title, topic, provider..."></div>
+        <div class="field mb-0"><label for="topic">Topic</label>
+          <select id="topic" name="topic"><option value="">All topics</option>
+            {% for t in topics %}<option value="{{ t }}" {{ 'selected' if t == topic }}>{{ t }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field mb-0"><label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty"><option value="">Any</option>
+            {% for d in difficulties %}<option value="{{ d }}" {{ 'selected' if d == difficulty }}>{{ d|capitalize }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="field mb-0"><label for="resource_type">Type</label>
+          <select id="resource_type" name="resource_type"><option value="">Any</option>
+            {% for t in resource_types %}<option value="{{ t }}" {{ 'selected' if t == resource_type }}>{{ t|capitalize }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="flex-between mt-md">
+        <label class="checkbox-tile" style="max-width:220px;"><input type="checkbox" name="free_only" value="1" {{ 'checked' if free_only == '1' }}> Free only</label>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+    </form>
+
+    <form method="get" action="{{ url_for('compare.index') }}">
+      <div class="grid grid-3">
+        {% for r in results %}
+          <div class="card card-hover">
+            {% if r.is_sponsored %}<span class="sponsored-tag">Sponsored</span>{% endif %}
+            <div class="flex-between">
+              <span class="badge badge-difficulty-{{ r.difficulty }}">{{ r.difficulty }}</span>
+              <span class="badge {{ 'badge-free' if r.is_free else 'badge-paid' }}">{{ 'Free' if r.is_free else '₹' ~ r.price_inr }}</span>
+            </div>
+            <h3 class="mt-sm" style="font-size:1.1rem;"><a href="{{ url_for('resources.detail', resource_id=r.id) }}">{{ r.title }}</a></h3>
+            <p class="text-muted" style="font-size:0.88rem;">{{ r.provider }} · {{ r.resource_type|capitalize }} {% if r.duration_minutes %}· {{ r.duration_minutes }} min{% endif %}</p>
+            {% if r.has_real_rating %}
+              <p style="font-size:0.85rem;">⭐ {{ r.rating }}/5 ({{ r.rating_count }} — {{ r.rating_source }})</p>
+            {% else %}
+              <p class="text-muted" style="font-size:0.85rem;">Rating unavailable</p>
+            {% endif %}
+            {% if r.id in scored %}
+              <p class="text-muted" style="font-size:0.82rem;">Match score: {{ scored[r.id].score }}/100</p>
+            {% endif %}
+            <label class="checkbox-tile mt-sm"><input type="checkbox" name="id" value="{{ r.id }}"> Compare</label>
+          </div>
+        {% else %}
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="icon">🔍</div>
+            <p>No resources match those filters yet. Try widening your search.</p>
+          </div>
+        {% endfor %}
+      </div>
+      {% if results %}<button type="submit" class="btn btn-outline mt-md">Compare selected</button>{% endif %}
+    </form>
+  </div>
+</section>
+{% endblock %}

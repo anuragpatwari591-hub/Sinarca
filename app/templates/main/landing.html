@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">✦ Personal Learning Navigator</span>
+      <h1>Stop searching.<br>Start knowing what to learn next.</h1>
+      <p style="font-size:1.15rem; max-width: 520px;">NAVORA turns your stream, goals and learning style into one clear next action — the right free or paid resource, in the right order, with a reason attached.</p>
+      <div class="flex gap-md flex-wrap mt-md">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary">Tell us about yourself — it's free</a>
+        <a href="{{ url_for('main.demo_login') }}" class="btn btn-outline">See a live demo dashboard</a>
+      </div>
+      <p class="text-muted mt-md">No credit card. Free-First mode always prioritizes free resources.</p>
+    </div>
+    <div class="card next-move" aria-label="Example of the Your Next Move feature">
+      <span class="badge" style="background:rgba(255,255,255,.18); color:#fff;">YOUR NEXT MOVE</span>
+      <h3 class="mt-sm">Learn SQL JOINs</h3>
+      <div class="why-box">
+        <strong>Why?</strong> It's required for the Data Analyst stage of your roadmap, and you've already completed SQL fundamentals.
+      </div>
+      <p style="color:#e6e4ff;">⏱ 45 minutes · Free resource · Beginner-friendly</p>
+      <p style="color:#e6e4ff;">After this: build a small SQL analysis project.</p>
+      <a href="{{ url_for('auth.register') }}" class="btn btn-accent">Start learning</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="grid grid-4">
+      <div class="stat-tile"><div class="stat-number">{{ stats.streams }}+</div><div class="stat-label">Streams supported</div></div>
+      <div class="stat-tile"><div class="stat-number">{{ stats.resources }}+</div><div class="stat-label">Curated resources</div></div>
+      <div class="stat-tile"><div class="stat-number">{{ stats.careers }}+</div><div class="stat-label">Careers mapped</div></div>
+      <div class="stat-tile"><div class="stat-number">{{ stats.roadmaps }}+</div><div class="stat-label">Structured roadmaps</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <h2 class="text-center">Tell us about yourself</h2>
+    <p class="text-center" style="max-width:640px; margin:0 auto 30px;">Seven short steps build your <strong>Learning DNA</strong> — your stream, interests, career goal, learning style, time, language and budget. Nothing more than what's needed to personalize your path.</p>
+    <div class="grid grid-4">
+      <div class="card"><h3>1. Education</h3><p>Stream, degree, specialization, year and semester.</p></div>
+      <div class="card"><h3>2. Interests &amp; goals</h3><p>What excites you, and where you want to end up.</p></div>
+      <div class="card"><h3>3. How you learn</h3><p>Video, reading, project-first — your style, your pace.</p></div>
+      <div class="card"><h3>4. Time &amp; budget</h3><p>How much time you have, and your free-vs-paid preference.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="text-center">How NAVORA works</h2>
+    <div class="grid grid-4 mt-md">
+      <div class="card card-hover"><h3>1. Discover</h3><p>We map your profile against real skills, careers and prerequisites.</p></div>
+      <div class="card card-hover"><h3>2. Plan</h3><p>You get a structured roadmap, broken into stages with milestones.</p></div>
+      <div class="card card-hover"><h3>3. Learn &amp; Build</h3><p>Every recommendation explains itself, and every stage ends in a project.</p></div>
+      <div class="card card-hover"><h3>4. Improve</h3><p>Tell us what worked. The engine adjusts your next recommendations.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <h2 class="text-center">Built for every stream</h2>
+    <div class="pill-list mt-md" style="justify-content:center;">
+      {% for stream in streams %}
+        <span class="badge badge-primary">{{ stream.name }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="text-center">Sample roadmaps</h2>
+    <div class="grid grid-3 mt-md">
+      {% for r in featured_roadmaps %}
+        <a class="card card-hover" href="{{ url_for('roadmap.detail', slug=r.slug) }}">
+          <h3>{{ r.title }}</h3>
+          <p>{{ r.description|truncate(110) }}</p>
+          <span class="badge badge-muted">{{ r.stages|length }} stages</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container grid grid-2 items-center">
+    <div>
+      <h2>Free-First, always</h2>
+      <p>NAVORA prioritizes free official resources, university content, YouTube, documentation and open practice platforms. Paid courses only appear when they add real, explained value — never because they pay more commission.</p>
+      <a href="{{ url_for('resources.search') }}?free_only=1" class="btn btn-outline">Browse free resources</a>
+    </div>
+    <div class="card">
+      <div class="flex-between mb-sm"><strong>Paid option</strong><span class="badge badge-paid">₹1,499</span></div>
+      <div class="flex-between mb-sm"><strong>Free alternative</strong><span class="badge badge-free">₹0</span></div>
+      <p class="text-muted">Why consider paid? Structured curriculum, mentor support, and a certificate — clearly explained, never hidden.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="text-center">Explainable, not a black box</h2>
+    <div class="card mt-md" style="max-width:640px; margin:0 auto;">
+      <strong>Why this resource?</strong>
+      <p class="mt-sm">You selected <em>Cybersecurity</em> as your career goal. You're currently a beginner in Networking. This resource covers networking fundamentals — a prerequisite for the next stage of your roadmap. It's free and matches your preference for short video lessons.</p>
+    </div>
+    <p class="text-center text-muted mt-sm">Every recommendation in NAVORA carries a reason like this — see docs/recommendation-engine.md for how the score is calculated.</p>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <h2 class="text-center">Don't just learn. Build.</h2>
+    <p class="text-center" style="max-width:600px;margin:0 auto;">Every roadmap stage ends in a real project recommendation — with required skills, a GitHub checklist, and a portfolio description.</p>
+    <div class="text-center mt-md"><a href="{{ url_for('projects.index') }}" class="btn btn-primary">Browse project ideas</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="text-center">Career readiness, made visible</h2>
+    <div class="grid grid-3 mt-md">
+      <div class="card"><h3>Skill Gap</h3><p>See exactly what's missing between where you are and your target role.</p></div>
+      <div class="card"><h3>Career Readiness</h3><p>A transparent checklist — skills, projects, portfolio — not a judgment.</p></div>
+      <div class="card"><h3>Career Explorer</h3><p>Required skills, roadmaps, and free + paid resources for dozens of roles.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <h2 class="text-center">What students say</h2>
+    <p class="text-center text-muted">Demo Data — illustrative of the intended experience.</p>
+    <div class="grid grid-3 mt-md">
+      <div class="card testimonial-card">"I finally knew what to do after finishing a video — not just what to watch next." <br><small class="text-muted">— B.Tech CSE, 3rd year (demo)</small></div>
+      <div class="card testimonial-card">"The skill gap page told me exactly why I wasn't job-ready yet." <br><small class="text-muted">— BCA student (demo)</small></div>
+      <div class="card testimonial-card">"Free-First mode meant I didn't have to pay for a bootcamp to get started." <br><small class="text-muted">— BBA student (demo)</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="text-center">Frequently asked questions</h2>
+    <div style="max-width:720px; margin:0 auto;">
+      <details class="faq-item"><summary>Is NAVORA free?</summary><p>Yes — the core platform, roadmaps, and Free-First discovery are free. Some future premium features are marked "Coming Soon".</p></details>
+      <details class="faq-item"><summary>Do you fabricate ratings or reviews?</summary><p>Never. If rating data isn't available for a resource, we show "Rating unavailable" rather than inventing one.</p></details>
+      <details class="faq-item"><summary>How does the recommendation engine work?</summary><p>It's an explainable, weighted scoring model — not a black-box AI. See our <a href="{{ url_for('main.about') }}">architecture notes</a>.</p></details>
+      <details class="faq-item"><summary>What if a link is broken or a course is outdated?</summary><p>Use "Report Resource" on any resource page — our admin team reviews every report.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="section text-center" style="background:linear-gradient(135deg, var(--primary), #6d28d9); color:#fff;">
+  <div class="container">
+    <h2 style="color:#fff;">Ready to know what to learn next?</h2>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-accent mt-sm">Build my Learning DNA</a>
+  </div>
+</section>
+
+{% endblock %}

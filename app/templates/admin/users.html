@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Manage Users — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Users</h1>
+    <form method="get" class="mb-md"><input type="search" name="q" value="{{ q }}" placeholder="Search by name or email"></form>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Name</th><th>Email</th><th>Onboarded</th><th>Joined</th><th>Status</th><th></th></tr>
+        {% for u in users %}
+          <tr>
+            <td>{{ u.name }}</td><td>{{ u.email }}</td>
+            <td>{{ 'Yes' if u.onboarding_complete else 'No' }}</td>
+            <td>{{ u.created_at.strftime('%d %b %Y') }}</td>
+            <td><span class="badge {{ 'badge-free' if u.is_active_account else 'badge-danger' }}">{{ 'Active' if u.is_active_account else 'Deactivated' }}</span></td>
+            <td>
+              <form method="post" action="{{ url_for('admin.toggle_user_active', user_id=u.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline">{{ 'Deactivate' if u.is_active_account else 'Reactivate' }}</button>
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

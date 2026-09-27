@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}{{ resource.title }} — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container" style="max-width:820px;">
+    <a href="{{ url_for('resources.search') }}">&larr; Back to search</a>
+    {% if resource.is_sponsored %}<div class="mt-sm"><span class="sponsored-tag">Sponsored placement</span></div>{% endif %}
+    <h1 class="mt-sm">{{ resource.title }}</h1>
+    <p class="text-muted">{{ resource.provider }} · {{ resource.resource_type|capitalize }} · {{ resource.language }}</p>
+
+    <div class="flex gap-sm flex-wrap mb-md">
+      <span class="badge badge-difficulty-{{ resource.difficulty }}">{{ resource.difficulty }}</span>
+      <span class="badge {{ 'badge-free' if resource.is_free else 'badge-paid' }}">{{ 'Free' if resource.is_free else '₹' ~ resource.price_inr }}</span>
+      {% if resource.duration_minutes %}<span class="badge badge-muted">{{ resource.duration_minutes }} min</span>{% endif %}
+      {% if score is not none %}<span class="badge badge-primary">Resource Score: {{ score }}/100</span>{% endif %}
+    </div>
+
+    {% if reasons %}
+      <div class="card" style="border-left:4px solid var(--primary);">
+        <strong>Why this resource?</strong>
+        <ul>{% for r in reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+      </div>
+    {% endif %}
+
+    <div class="card mt-md">
+      <h3>About this resource</h3>
+      <p>{{ resource.description or "No description recorded yet." }}</p>
+      {% if resource.prerequisites %}<p><strong>Prerequisites:</strong> {{ resource.prerequisites }}</p>{% endif %}
+      <p><strong>Rating:</strong>
+        {% if resource.has_real_rating %}⭐ {{ resource.rating }}/5 from {{ resource.rating_count }} learners ({{ resource.rating_source }}){% else %}Rating unavailable{% endif %}
+      </p>
+      <p><strong>Last verified:</strong> {{ resource.last_verified_at.strftime('%d %b %Y') if resource.last_verified_at else 'Not yet verified' }}</p>
+      <a href="{{ url_for('resources.go', resource_id=resource.id) }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Open resource ↗</a>
+    </div>
+
+    {% if current_user.is_authenticated and not current_user.is_admin %}
+      <div class="grid grid-2 mt-md">
+        <div class="card">
+          <h3>Your progress</h3>
+          <form method="post" action="{{ url_for('resources.update_progress', resource_id=resource.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="status" onchange="this.form.submit()">
+              <option value="in_progress" {{ 'selected' if progress and progress.status == 'in_progress' }}>In progress</option>
+              <option value="completed" {{ 'selected' if progress and progress.status == 'completed' }}>Completed</option>
+            </select>
+          </form>
+          <form method="post" action="{{ url_for('resources.toggle_bookmark', resource_id=resource.id) }}" class="mt-sm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline btn-block">{{ 'Remove bookmark' if is_bookmarked else 'Save for later' }}</button>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Was this useful?</h3>
+          <form method="post" action="{{ url_for('resources.feedback', resource_id=resource.id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="flex gap-sm mb-sm">
+              <button type="submit" name="useful" value="yes" class="btn btn-outline btn-sm">👍 Yes</button>
+              <button type="submit" name="useful" value="no" class="btn btn-outline btn-sm">👎 No</button>
+            </div>
+            <select name="reason">
+              <option value="">Reason (optional)</option>
+              {% for value, label in feedback_reasons %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mt-md">
+        <h3>Report an issue</h3>
+        <form method="post" action="{{ url_for('resources.report', resource_id=resource.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="grid grid-2">
+            <select name="report_type" required>
+              <option value="">Select an issue</option>
+              {% for value, label in report_types %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+            <input type="text" name="details" placeholder="Optional details">
+          </div>
+          <button type="submit" class="btn btn-danger mt-sm">Report resource</button>
+        </form>
+      </div>
+    {% endif %}
+
+    {% if similar %}
+      <h3 class="mt-lg">Similar resources</h3>
+      <div class="grid grid-3">
+        {% for s in similar %}
+          <a class="card card-hover" href="{{ url_for('resources.detail', resource_id=s.id) }}">
+            <strong>{{ s.title }}</strong>
+            <p class="text-muted" style="font-size:0.85rem;">{{ s.provider }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

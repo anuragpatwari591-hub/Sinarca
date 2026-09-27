@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}About — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container" style="max-width:760px;">
+    <h1>About {{ platform_name }}</h1>
+    <p>{{ platform_name }} is a personal learning navigator built to solve one problem: students don't lack access to educational content — they lack a clear, trustworthy answer to "what should I do next?"</p>
+    <p>The platform combines a structured student profile ("Learning DNA"), an explainable recommendation engine, curated resource data, and project-based learning into one coherent loop: <strong>Discover → Understand → Plan → Learn → Practice → Build → Measure → Improve.</strong></p>
+    <h3>Built as a B.Tech IT capstone</h3>
+    <p>The technology choices (Flask, SQLAlchemy, server-rendered templates) were made so the system is fully explainable in a viva, while the product experience is designed to the bar of an early-stage ed-tech startup. See <code>docs/architecture.md</code> for the full technical write-up.</p>
+    <h3>What we never do</h3>
+    <ul>
+      <li>Fabricate ratings, reviews, user counts, or completion statistics.</li>
+      <li>Claim AI capabilities the platform doesn't actually have.</li>
+      <li>Rank a resource higher purely because it earns more commission.</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Roadmaps — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Structured Roadmaps</h1>
+    <p class="text-muted">Each roadmap breaks a goal into ordered stages with resources, projects and milestones.</p>
+    <div class="grid grid-3">
+      {% for r in roadmaps %}
+        <a class="card card-hover" href="{{ url_for('roadmap.detail', slug=r.slug) }}">
+          <h3>{{ r.title }}</h3>
+          <p>{{ r.description|truncate(120) }}</p>
+          <span class="badge badge-muted">{{ r.stages|length }} stages</span>
+        </a>
+      {% else %}
+        <p class="text-muted">No roadmaps yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

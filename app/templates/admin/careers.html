@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Careers — {{ platform_name }}{% endblock %}
+{% block content %}
+<section class="section-tight">
+  <div class="container">
+    <h1>Careers</h1>
+    <p class="text-muted">Career records are managed via the seed script for this build. Edit <code>seed/seed_data.py</code> and re-run <code>flask --app run.py seed</code> to change them.</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Title</th><th>Required skills</th><th>Roadmap linked</th></tr>
+        {% for c in careers %}
+          <tr><td><a href="{{ url_for('career.detail', slug=c.slug) }}">{{ c.title }}</a></td><td>{{ c.required_skills|join(', ') }}</td><td>{{ 'Yes' if c.roadmap_id else 'No' }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}
